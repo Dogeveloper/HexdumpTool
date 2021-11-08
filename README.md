@@ -7,3 +7,6 @@ Converts hex dumps in the format:
 ```
 into one nice long hex string, such as:
 `0x010203`
+
+## Libraries Used
+* wxWidgets
