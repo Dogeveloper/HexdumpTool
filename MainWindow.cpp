@@ -29,6 +29,46 @@ wxPoint MainFrame::PositionAsPercent(int percentX, int percentY) {
 	return wxPoint((int)x, (int)y);
 }
 
+void MainFrame::OnOpenFileClicked(wxCommandEvent& event)
+{
+	wxFileDialog openFileDialog(this, _("Load File Selection"), "", "", "", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+	if (openFileDialog.ShowModal() == wxID_CANCEL) {
+		// yell at the user
+		wxMessageDialog msg(this, _("Please select a file."), _("Error"), wxOK | wxICON_ERROR);
+		msg.ShowModal();
+		event.Skip();
+		return;
+	}
+
+	wxFileInputStream is(openFileDialog.GetPath());
+	if (is.IsOk()) {
+		wxString file;
+		wxTextFile text;
+		wxString fileText;
+
+		file.Clear();
+		file = openFileDialog.GetPath();
+		text.Open(file);
+		
+		while (!text.Eof()) {
+			fileText.Append(text.GetNextLine() + '\n');
+		}
+
+		inputTextBox->SetValue(fileText);
+	}
+	else {
+		wxMessageDialog msg(this, _("File could not be loaded. "), _("Error"), wxOK | wxICON_ERROR);
+		msg.ShowModal();
+	}
+	event.Skip();
+}
+
+void MainFrame::OnExitClicked(wxCommandEvent& event)
+{
+	Close(true);
+	event.Skip();
+}
+
 void MainFrame::MenuSetup() {
 	wxMenuBar* mb = new wxMenuBar();
 
@@ -40,6 +80,9 @@ void MainFrame::MenuSetup() {
 	mb->Append(file_menu, _T("&File"));
 
 	SetMenuBar(mb);
+
+	this->Bind(wxEVT_MENU, &MainFrame::OnOpenFileClicked, this, ID_MENU_OPEN_FILE); // bind the events to the correct functions
+	this->Bind(wxEVT_MENU, &MainFrame::OnExitClicked, this, ID_MENU_QUIT);
 }
 
 MainFrame::MainFrame() : wxFrame(NULL, wxID_ANY, "Hexdump Tool", wxPoint(0, 0), wxSize(SIZE_X, SIZE_Y)) {
@@ -63,6 +106,8 @@ void MainFrame::OnSubmitClicked(wxCommandEvent& event) {
 	outputArea->SetValue(Hexdump::HexToSingleString(inputTextBox->GetValue().ToStdString()));
 	event.Skip();
 }
+
+
 
 MainFrame::~MainFrame() {
 

@@ -1,7 +1,10 @@
 #pragma once
 
 #include "wx/wx.h"
+#include "wx/wfstream.h"
+#include "wx/textfile.h"
 #include "Hexdump.h"
+
 
 #define SIZE_X 400
 #define SIZE_Y 500
@@ -18,6 +21,9 @@ public:
 	~MainFrame();
 
 	void OnSubmitClicked(wxCommandEvent &event);
+	void OnOpenFileClicked(wxCommandEvent& event);
+	void OnExitClicked(wxCommandEvent& event);
+
 private:
 
 	void MenuSetup();
